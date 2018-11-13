@@ -181,16 +181,20 @@ using Microsoft.Extensions.Logging;
 
 private static Tracer InitTracer(string serviceName, ILoggerFactory loggerFactory)
 {
-    var samplerConfiguration = new Configuration.SamplerConfiguration(loggerFactory)
+    var samplerConfig = new Configuration.SamplerConfiguration(loggerFactory)
         .WithType(ConstSampler.Type)
         .WithParam(1);
 
-    var reporterConfiguration = new Configuration.ReporterConfiguration(loggerFactory)
-        .WithLogSpans(true);
+    var senderConfig = new Configuration.SenderConfiguration(loggerFactory)
+        .WithEndpoint("http://localhost:14268/api/traces");
+
+    var reporterConfig = new Configuration.ReporterConfiguration(loggerFactory)
+        .WithLogSpans(true)
+        .WithSender(senderConfig);
 
     return (Tracer)new Configuration(serviceName, loggerFactory)
-        .WithSampler(samplerConfiguration)
-        .WithReporter(reporterConfiguration)
+        .WithSampler(samplerConfig)
+        .WithReporter(reporterConfig)
         .GetTracer();
 }
 ```
