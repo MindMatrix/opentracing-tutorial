@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using OpenTracing;
 using OpenTracing.Tutorial.Library;
+using Jaeger;
 
 namespace OpenTracing.Tutorial.Lesson03.Solution.Server.Controllers
 {
@@ -16,18 +17,10 @@ namespace OpenTracing.Tutorial.Lesson03.Solution.Server.Controllers
             _tracer = tracer;
         }
 
-        // GET: api/format
-        [HttpGet]
-        public string Get()
-        {
-            return "Hello!";
-        }
-
-        // GET: api/format/helloTo
-        [HttpGet("{helloTo}", Name = "GetFormat")]
         public string Get(string helloTo)
         {
-            using (var scope = _tracer.BuildSpan("format-controller").StartActive(true))
+            var headers = Request.Headers.ToDictionary(k => k.Key, v => v.Value.First());
+            using (var scope = Tracing.StartServerSpan(_tracer, headers, "format-controller"))
             {
                 var formattedHelloString = $"Hello, {helloTo}!";
                 scope.Span.Log(new Dictionary<string, object>
@@ -36,7 +29,7 @@ namespace OpenTracing.Tutorial.Lesson03.Solution.Server.Controllers
                     ["value"] = formattedHelloString
                 });
                 return formattedHelloString;
-            }
+            }   
         }
     }
 }

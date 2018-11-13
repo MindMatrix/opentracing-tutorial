@@ -91,7 +91,7 @@ Now while the server is still running, opening another command prompt and execut
 
 Since the only change we made in the `Hello.cs` app was to replace two operations with HTTP calls,
 the tracing story remains the same - we get a trace with three spans, all from `hello-world` service.
-But now we have two more microservices participating in the transaction and we want to see them
+But now we have a microservice participating in the transaction and we want to see it
 in the trace as well. In order to continue the trace over the process boundaries and HTTP calls,
 we need a way to propagate the span context over the wire. The OpenTracing API provides two functions
 in the Tracer interface to do that, `Inject(spanContext, format, carrier)` and `Extract(format, carrier)`.
@@ -114,8 +114,8 @@ request we need to call `_tracer.Inject` before building the HTTP request:
 
 ```csharp
 var span = scope.Span
-    .SetTag(Tags.SpanKind, Tags.SpanKindClient);
-    .SetTag(Tags.HttpMethod, "GET");
+    .SetTag(Tags.SpanKind, Tags.SpanKindClient)
+    .SetTag(Tags.HttpMethod, "GET")
     .SetTag(Tags.HttpUrl, url);
 
 var dictionary = new Dictionary<string, string>();
@@ -138,7 +138,8 @@ Our server is currently not instrumented for tracing. We need to do the followin
 Add a tracer property to the `Startup` class:
 
 ```csharp
-private static readonly Tracer Tracer = Tracing.Init("Webservice");
+    private static readonly ILoggerFactory LoggerFactory = new LoggerFactory().AddConsole();
+    private static readonly Tracer Tracer = Tracing.Init("Webservice", LoggerFactory);
 ```
 
 Register the tracer and add it to the services, making it available globally through Dependency Injection:
@@ -166,30 +167,14 @@ public FormatController(ITracer tracer)
 
 #### Extract the span context from the incoming request using `ITracer.Extract`
 
-First, add a helper function:
+You can call the helper method in the tracing library in this repository to extract the span from the request:
 
 ```csharp
-public static IScope StartServerSpan(ITracer tracer, IDictionary<string, string> headers, string operationName)
-{
-    ISpanBuilder spanBuilder;
-    try
+    var headers = Request.Headers.ToDictionary(k => k.Key, v => v.Value.First());
+    using (var scope = Tracing.StartServerSpan(_tracer, headers, "format-controller"))
     {
-        ISpanContext parentSpanCtx = tracer.Extract(BuiltinFormats.HttpHeaders, new TextMapExtractAdapter(headers));
-
-        spanBuilder = tracer.BuildSpan(operationName);
-        if (parentSpanCtx != null)
-        {
-            spanBuilder = spanBuilder.AsChildOf(parentSpanCtx);
-        }
+        ....
     }
-    catch (Exception)
-    {
-        spanBuilder = tracer.BuildSpan(operationName);
-    }
-
-    // TODO could add more tags like http.url
-    return spanBuilder.WithTag(Tags.SpanKind, Tags.SpanKindServer).StartActive(true);
-}
 ```
 
 The logic here is similar to the client side instrumentation, except that we are using `_tracer.Extract`
@@ -202,7 +187,7 @@ Now change the `/api/format/helloTo` handler method to use `StartServerSpan`:
 public string Get(string helloTo)
 {
     var headers = Request.Headers.ToDictionary(k => k.Key, v => v.Value.First());
-    using (var scope = StartServerSpan(_tracer, headers, "format-controller"))
+    using (var scope = Tracing.StartServerSpan(_tracer, headers, "format-controller"))
     {
         var formattedHelloString = $"Hello, {helloTo}!";
         scope.Span.Log(new Dictionary<string, object>
