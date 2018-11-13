@@ -47,6 +47,12 @@ namespace OpenTracing.Tutorial.Lesson01.Solution
                     new Hello(tracer, loggerFactory).SayHello(helloTo);
                 }
             }
+
+            if (System.Diagnostics.Debugger.IsAttached)
+            {
+                Console.WriteLine("\nPress any key to exit");
+                Console.ReadKey();
+            }
         }
     }
 }
