@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 15.0.28010.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lesson01", "Lesson01", "{205C7C80-5E17-469B-A357-7A34D7773DCD}"
+	ProjectSection(SolutionItems) = preProject
+		csharp\src\lesson01\README.md = csharp\src\lesson01\README.md
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Library", "Library", "{829B1FC2-139D-41DD-9C76-8E8AC9633B9B}"
 EndProject

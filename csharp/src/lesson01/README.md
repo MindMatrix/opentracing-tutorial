@@ -12,7 +12,7 @@ Learn how to:
 
 ### A simple Hello-World program
 
-Let's create a simple C# program `lesson01/exercise/Hello.cs` that takes an argument and prints `"Hello, {arg}!"`.
+Let's create a simple C# program `lesson01/exercise/Hello.cs` that takes an argument and prints `"Hello, {arg}!"`. If you don't pass in a argument by going to `Project Properties -> Debug -> Application Arguments` it will default to `OpenTrace`.
 
 ```csharp
 using System;
@@ -26,15 +26,22 @@ namespace OpenTracing.Tutorial.Lesson01.Exercise
             var helloString = $"Hello, {helloTo}!";
             Console.WriteLine(helloString);
         }
+
         public static void Main(string[] args)
         {
             if (args.Length != 1)
-            {
-                throw new ArgumentException("Expecting one argument");
-            }
+                args = new string[] { "OpenTrace" };
+
 
             var helloTo = args[0];
             new Hello().SayHello(helloTo);
+
+            //this will keep the window open when running the project inside VS2017
+            if (System.Diagnostics.Debugger.IsAttached)
+            {
+                Console.WriteLine("\nPress any key to exit");
+                Console.ReadKey();
+            }
         }
     }
 }
@@ -86,25 +93,30 @@ namespace OpenTracing.Tutorial.Lesson01.Exercise
         public static void Main(string[] args)
         {
             if (args.Length != 1)
-            {
-                throw new ArgumentException("Expecting one argument");
-            }
+                args = new string[] { "OpenTrace" };
 
             using (var loggerFactory = new LoggerFactory().AddConsole())
             {
                 var helloTo = args[0];
                 new Hello(loggerFactory).SayHello(helloTo);
             }
+
+            //this will keep the window open when running the project inside VS2017
+            if (System.Diagnostics.Debugger.IsAttached)
+            {
+                Console.WriteLine("\nPress any key to exit");
+                Console.ReadKey();
+            }
         }
     }
 }
 ```
 
-Run it:
+You can run it through the command propmpt or by setting it as the active project in VS2017 and running it:
 ```powershell
 $ dotnet run Bryan
 info: OpenTracing.Tutorial.Lesson01.Example.Hello[0]
-	Hello, Bryan!
+	Hello, OpenTrace!
 ```
 
 ### Create a trace
@@ -144,14 +156,19 @@ namespace OpenTracing.Tutorial.Lesson01.Exercise
         public static void Main(string[] args)
         {
             if (args.Length != 1)
-            {
-                throw new ArgumentException("Expecting one argument");
-            }
+                args = new string[] { "OpenTrace" };
 
             using (var loggerFactory = new LoggerFactory().AddConsole())
             {
                 var helloTo = args[0];
                 new Hello(GlobalTracer.Instance, loggerFactory).SayHello(helloTo);
+            }
+
+            //this will keep the window open when running the project inside VS2017
+            if (System.Diagnostics.Debugger.IsAttached)
+            {
+                Console.WriteLine("\nPress any key to exit");
+                Console.ReadKey();
             }
         }
     }
