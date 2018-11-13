@@ -17,7 +17,7 @@ copy ..\..\..\lesson02\solution\HelloActive.cs .
 del Program.cs
 ```
 
-Make some slight changes to have the App call the API instead of doing the string formatting work locally:
+Make some slight changes to have the App call the API instead of doing the string formatting work locally and make sure to rename `MainActive` to `Main` so your program has a main entry point to run:
 
 ```csharp
 ...
@@ -75,9 +75,6 @@ namespace OpenTracing.Tutorial.Lesson03.Exercise.Server.Controllers
     }
 }
 ```
-
-To have the server app on the port 8081, we have to adjust the `Properties/launchSettings.json` file. Make sure, 
-that all `applicationUrl` entries have the value `http://localhost:8081/`.
 
 Start the server app from the `exercuse\Lesson3.Exercuse.Server` folder:
 ```powerhshell
