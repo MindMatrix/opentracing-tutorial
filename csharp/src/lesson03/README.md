@@ -149,8 +149,8 @@ public void ConfigureServices(IServiceCollection services)
 {
     services.AddMvc();
 
-    services.AddSingleton<ITracer, Tracer>(t => Tracer);
-}
+    GlobalTracer.Register(Tracer);
+    services.AddOpenTracing();}
 ```
 
 Add a member variable and a constructor to the `FormatController`. The `ITracer` will be supplied using 
