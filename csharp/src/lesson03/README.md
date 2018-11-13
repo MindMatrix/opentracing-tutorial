@@ -86,8 +86,7 @@ dotnet run
 
 and access the endpoint directly in your browser at `http://localhost:8081/api/format/Bryan`
 
-Executing the client still produces the same threes spans as in the previous lesson, meaning we
-have no traces for the server side:
+Now while the server is still running, opening another command prompt and execute the client, you will still produce the same threes spans as in the previous lesson, meaning we have no traces for the server side:
 
 ![Trace](trace-client.png)
 
