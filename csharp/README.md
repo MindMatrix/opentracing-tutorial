@@ -3,7 +3,7 @@
 ## Installing
 
 The tutorials are using CNCF Jaeger (https://github.com/jaegertracing/jaeger) as the tracing backend, 
-[see here](../README.md) how to install it in a Docker image.
+[see here](../README.md) how to install it in a Kubernetes.
 
 For running the code, you will need the [.NET Core SDK](https://www.microsoft.com/net/download). The code can be written with any text editor and run from the command line.
 
