@@ -12,10 +12,8 @@ Learn how to:
 
 ### Hello-World Microservice App
 
-For this lesson we are going to need a client and server component. To get started, please create
-a command line project, similar to the previous lessons. Additionally, create a "ASP .NET Core Web Application"
-with the "API" template (`dotnet new webapi`). Make sure to add the reference to our `OpenTracing.Tutorial.Library` library to both projects and
-copy the `HelloActive.cs` file from the previous lesson into the client solution replacing the automatically
+For this lesson we are going to need a client and server component. To get started, please 
+copy the `HelloActive.cs` file from the previous lesson into the client solution and delete the automatically
 created `Program.cs`. Make some slight changes to have the App call the API instead of doing the string formatting
 work locally:
 
