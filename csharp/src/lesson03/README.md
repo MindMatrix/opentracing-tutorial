@@ -83,11 +83,12 @@ namespace OpenTracing.Tutorial.Lesson03.Exercise.Server.Controllers
 To have the server app on the port 8081, we have to adjust the `Properties/launchSettings.json` file. Make sure, 
 that all `applicationUrl` entries have the value `http://localhost:8081/`.
 
-Start the server app and access the endpoint directly:
-
-```powershell
-$ curl http://localhost:8081/api/format/Bryan
+Start the server app from the `exercuse\Lesson3.Exercuse.Server` folder:
+```powerhshell
+dotnet run
 ```
+
+and access the endpoint directly in your browser at `http://localhost:8081/api/format/Bryan`
 
 Executing the client still produces the same threes spans as in the previous lesson, meaning we
 have no traces for the server side:
