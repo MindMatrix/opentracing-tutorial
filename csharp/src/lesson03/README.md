@@ -11,8 +11,44 @@ Learn how to:
 ## Walkthrough
 
 ### Hello-World Microservice App
-For this lesson we are going to need a client and server component. Let's reproduce the functionality of `FormatString`
-in the webapi project. Rename the `ValueController` to `FormatController` and adjust it to the example code below:
+For this lesson we are going to need a client and server component. To get started, please copy the `HelloActive.cs` file from the previous lesson into the client exercise folder and delete the automatically created `Program.cs`:
+```powershell
+copy ..\..\..\lesson02\solution\HelloActive.cs .
+del Program.cs
+```
+
+Make some slight changes to have the App call the API instead of doing the string formatting work locally:
+
+```csharp
+...
+using System.Net;
+
+namespace OpenTracing.Tutorial.Lesson03.Exercise.Client
+{
+    internal class HelloActive
+    {
+        private readonly WebClient _webClient = new WebClient();
+        ...
+        private string FormatString(string helloTo)
+        {
+            using (var scope = _tracer.BuildSpan("format-string").StartActive(true))
+            {
+                var url = $"http://localhost:8081/api/format/{helloTo}";
+                var helloString = _webClient.DownloadString(url);
+                scope.Span.Log(new Dictionary<string, object>
+                {
+                    [LogFields.Event] = "string.Format",
+                    ["value"] = helloString
+                });
+                return helloString;
+            }
+        }
+    ...
+    }
+}
+```
+
+Let's reproduce the functionality of `FormatString` in the server exercise folder. Rename the `ValueController` to `FormatController` and adjust it to the example code below:
 
 ```csharp
 using Microsoft.AspNetCore.Mvc;
@@ -49,45 +85,6 @@ dotnet run
 ```
 
 and access the endpoint directly in your browser at `http://localhost:8081/api/format/Bryan`
-
-## Hello-World Client App
-
-To get started, please copy the `HelloActive.cs` file from the previous lesson into the client solution and delete the automatically created `Program.cs` from the `lesson03\exercise\Lesson03.Exercise.Client` folder:
-```powershell
-copy ..\..\..\lesson02\solution\HelloActive.cs .
-del Program.cs
-```
-
-Make some slight changes to have the App call the API instead of doing the string formatting work locally:
-
-```csharp
-...
-using System.Net;
-
-namespace OpenTracing.Tutorial.Lesson03.Exercise.Client
-{
-    internal class HelloActive
-    {
-        private readonly WebClient _webClient = new WebClient();
-        ...
-        private string FormatString(string helloTo)
-        {
-            using (var scope = _tracer.BuildSpan("format-string").StartActive(true))
-            {
-                var url = $"http://localhost:8081/api/format/{helloTo}";
-                var helloString = _webClient.DownloadString(url);
-                scope.Span.Log(new Dictionary<string, object>
-                {
-                    [LogFields.Event] = "string.Format",
-                    ["value"] = helloString
-                });
-                return helloString;
-            }
-        }
-    ...
-    }
-}
-```
 
 Executing the client still produces the same threes spans as in the previous lesson, meaning we
 have no traces for the server side:
