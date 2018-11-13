@@ -14,8 +14,13 @@ Learn how to:
 
 For this lesson we are going to need a client and server component. To get started, please 
 copy the `HelloActive.cs` file from the previous lesson into the client solution and delete the automatically
-created `Program.cs`. Make some slight changes to have the App call the API instead of doing the string formatting
-work locally:
+created `Program.cs` from the `lesson03\exercise\Lesson03.Exercise.Client` folder:
+```powershell
+copy ..\..\..\lesson02\solution\HelloActive.cs .
+del Program.cs
+```
+
+Make some slight changes to have the App call the API instead of doing the string formatting work locally:
 
 ```csharp
 ...
@@ -25,9 +30,8 @@ namespace OpenTracing.Tutorial.Lesson03.Exercise.Client
 {
     internal class HelloActive
     {
-        private readonly ITracer _tracer;
         private readonly WebClient _webClient = new WebClient();
-
+        ...
         private string FormatString(string helloTo)
         {
             using (var scope = _tracer.BuildSpan("format-string").StartActive(true))
