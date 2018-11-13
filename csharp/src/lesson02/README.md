@@ -16,38 +16,17 @@ First, copy your work or the official solution from [Lesson 1](../lesson01) to `
 
 In [Lesson 1](../lesson01) we wrote a program that creates a trace that consists of a single span.
 That single span combined two operations performed by the program, formatting the output string
-and printing it. Let's move those operations into standalone functions first:
+and printing it. Let's move those operations into standalone functions and wrap each section in its own span:
 
 ```csharp
-var helloString = FormatString(span, helloTo);
-PrintHello(span, helloString);
-```
-
-and the functions:
-
-```csharp
-private static string FormatString(ISpan span, string helloTo)
+public void SayHello(string helloTo)
 {
-    var helloString = $"Hello, {helloTo}!";
-    span.Log(new Dictionary<string, object>
-    {
-        [LogFields.Event] = "string.Format",
-        ["value"] = helloString
-    });
-    return helloString;
+    var span = _tracer.BuildSpan("say-hello").Start();
+    span.SetTag("hello-to", helloTo);
+    var helloString = FormatString(span, helloTo);
+    PrintHello(span, helloString);
+    span.Finish();
 }
-
-private static void PrintHello(ISpan span, string helloString)
-{
-    _logger.LogInformation(helloString);
-    span.Log("WriteLine");
-}
-```
-
-Of course, this does not change the outcome. What we really want to do is to wrap each function into its own span.
-
-```csharp
-using System.Reflection;
 
 private string FormatString(ISpan rootSpan, string helloTo)
 {
