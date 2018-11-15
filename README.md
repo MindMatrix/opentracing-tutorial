@@ -17,6 +17,14 @@ kubectl apply -f all-in-one.yml
 
 Once the backend starts, the Jaeger UI will be accessible at http://localhost:8888.
 
+Note: All the demos require you to run the jaeger agent on your local machine. The agent acts as a buffer between your application and the collector and communicates over UDP. The agent will collect all your logs and ship them off to the collector for you, the agent running locally over UDP creates minimal overhead to your application.
+
+Open a command prompt in the jaeger binaries folder and run the following command:
+```
+jaeger-agent.exe --collector.host-port "localhost:14267"
+```
+
+
 ## Tutorials by Language
 
   * [C# tutorial](./csharp/)

@@ -202,12 +202,8 @@ private static Tracer InitTracer(string serviceName, ILoggerFactory loggerFactor
         .WithType(ConstSampler.Type)
         .WithParam(1);
 
-    var senderConfig = new Configuration.SenderConfiguration(loggerFactory)
-        .WithEndpoint("http://localhost:14268/api/traces");
-
     var reporterConfig = new Configuration.ReporterConfiguration(loggerFactory)
-        .WithLogSpans(true)
-        .WithSender(senderConfig);
+        .WithLogSpans(true);
 
     return (Tracer)new Configuration(serviceName, loggerFactory)
         .WithSampler(samplerConfig)
