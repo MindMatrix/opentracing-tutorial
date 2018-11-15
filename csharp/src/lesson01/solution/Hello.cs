@@ -35,9 +35,7 @@ namespace OpenTracing.Tutorial.Lesson01.Solution
         public static void Main(string[] args)
         {
             if (args.Length != 1)
-            {
-                throw new ArgumentException("Expecting one argument");
-            }
+                args = new string[] { "OpenTrace" };
 
             using (var loggerFactory = new LoggerFactory().AddConsole())
             {
@@ -48,6 +46,7 @@ namespace OpenTracing.Tutorial.Lesson01.Solution
                 }
             }
 
+            //this will keep the window open when running the project inside VS2017
             if (System.Diagnostics.Debugger.IsAttached)
             {
                 Console.WriteLine("\nPress any key to exit");
